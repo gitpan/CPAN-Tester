@@ -1,5 +1,12 @@
 Revision history for Perl extension CPAN::Tester.
 
+0.01_11 2005/03/03
+ - Packages "index" data is being processed by Parse::CPAN::Packages.
+ - Email::Send::send() sends mail upon error.
+ - File::HomeDir's home() evaluates the home directory.
+ - Submissions which have disappeared from PAUSE's incoming
+   directory, will be removed from the trackfile.
+
 0.01_10 2005/03/02
  - Reworked script to module.
 

@@ -2,14 +2,16 @@
 
 use strict;
 use warnings;
+
 use CPAN::Tester;
+use File::HomeDir;
 use File::Slurp;
 use Getopt::Long;
 
+our $CONFIG = '.cpantesterrc';
+
 my ($conf, $opt) = parse_args();
 my $ct = CPAN::Tester->new( $conf, $opt );
-    
-$ct->weed_out_track;
     
 unless ($ct->{OPT}{poll}) {
     $ct->do_verbose( \*STDERR, "--> Mode: non-polling, 1\n" );
@@ -27,24 +29,25 @@ sub parse_args {
     $Getopt::Long::autoabbrev = 0;
     $Getopt::Long::ignorecase = 0; 
 
-    GetOptions(\my %opt, 'h', 'i', 'p=i', 'v', 'V') or usage();
+    GetOptions( \my %opt, 'h', 'i', 'p=i', 'v', 'vv', 'V' ) or usage();
     
     usage()   if $opt{h};
     version() if $opt{V};
         
-    my $login   = getlogin;
-    my $homedir = $login =~ /(root)/ ? "/$1" : "/home/$login";
+    my $homedir = home();
     
-    my $conf_text = read_file( "$homedir/.cpantesterrc" )
-      or die "Could not open $homedir/.cpantesterc: $!\n";
+    my $config = "$homedir/" . $CPAN::Tester::CONFIG;
+    my $conf_text = read_file( $config ) or die "Could not open $config: $!\n";
+    
     %conf = $conf_text =~ /^([^=]+?)\s+=\s+(.+)$/gm;
     
-    $conf{prefix}      = '-->';
-    $conf{prompt}      = '#';
+    $conf{prefix}    ||= '-->';
+    $conf{prompt}    ||= '#';
     
-    $opt{interactive}  = $opt{i} ? 1 : 0;
-    $opt{poll}         = $opt{p} ? $opt{p} : 0;
-    $opt{verbose}      = $opt{v} ? 1 : 0;
+    $opt{interactive}  = $opt{i}               ? 1       : 0;
+    $opt{poll}         = $opt{p}               ? $opt{p} : 0;
+    $opt{verbose}      = ($opt{v} || $opt{vv}) ? 1       : 0;
+    $opt{very_verbose} = $opt{vv} 	       ? 1       : 0;
     
     return (\%conf, \%opt);
 }
@@ -52,15 +55,16 @@ sub parse_args {
 sub usage {
     my ($err_msg) = @_;
     $err_msg ||= '';
-    $err_msg .= "\n" if $err_msg;
     
     print <<USAGE;
-usage: $0 [ -h | -V ] [ -i | -p intervall | -v ]
+usage: $0 [ -h | -V ] [ -i | -p intervall | -v(v) ]
   -h			this help screen
-  -i			interactive (defies -v) 
+  -i			interactive
   -p intervall		run in polling mode 
   			    intervall: seconds to wait until polling
-  -v			verbose
+  -v(v)		        verbose (very)
+                            prints system output (ftp data and
+			    and Test::Reporter debug)
   -V			version info
 USAGE
 
@@ -80,15 +84,17 @@ cpantester - Run CPAN::Tester
 
 =head1 SYNOPSIS
 
- usage: cpantester.pl [ -h | -V ] [ -i | -p intervall | -v ]
+ usage: cpantester.pl [ -h | -V ] [ -i | -p intervall | -v(v) ]
 
 =head1 OPTIONS
 
-   -h			this help screen
-   -i			interactive (defies -v)
-   -p intervall		run in polling mode 
-  			    intervall: seconds to wait until poll again
-   -v			verbose
-   -V			version info
+   -h			 this help screen
+   -i			 interactive
+   -p intervall		 run in polling mode 
+  			     intervall: seconds to wait until polling
+   -v(v)		 verbose (very)
+                             prints system output (ftp data and
+			     and Test::Reporter debug)
+   -V			 version info
 
 =cut

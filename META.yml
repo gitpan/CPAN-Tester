@@ -1,14 +1,18 @@
---- #YAML:1.0
-module_name: CPAN-Tester
-dist_version_from: lib/CPAN/Tester.pm
-installdirs: site
+# http://module-build.sourceforge.net/META-spec.html
+#XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
+name:         CPAN-Tester
+version:      0.01_11
+version_from: lib/CPAN/Tester.pm
+installdirs:  site
 requires:
-    Carp: 		 0
-    ExtUtils::MakeMaker: 0
-    File::Slurp: 	 0
-    Getopt::Long: 	 0
-    Net::FTP: 		 0
-    Test::Reporter: 	 0
+    Carp:                          0
+    Email::Send:                   1.46
+    ExtUtils::MakeMaker:           0
+    File::Slurp:                   9999.07
+    Getopt::Long:                  0
+    Net::FTP:                      0
+    Parse::CPAN::Packages:         2.24
+    Test::Reporter:                1.27
+
 distribution_type: module
-license: perl
-dist_abstract: Test CPAN contributions and submit reports to cpan-testers@perl.org
+generated_by: ExtUtils::MakeMaker version 6.17
