@@ -1,0 +1,28 @@
+CPAN::Tester
+============
+
+Test CPAN contributions and submit reports to cpan-testers@perl.org
+
+INSTALLATION
+
+To install this module type the following:
+
+   perl Makefile.PL
+   make
+   make test
+   make install
+   
+SCRIPTS
+
+bin/cpantester.pl
+
+Runs CPAN::Tester
+
+LICENSE
+
+This program is free software;
+you may redistribute it and/or modify it under the same terms as Perl itself.
+
+AUTHOR
+
+Steven Schubiger
